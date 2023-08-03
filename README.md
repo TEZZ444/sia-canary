@@ -53,8 +53,8 @@ COLOR: "#2f3136"
 
  Spotify :
 
-const clientId = "YOUR_SPOTIFY_CLIENT_ID";
-const clientSecret = "YOUR_SPOTIFY_SECRET";
+const clientId = "YOUR_SPOTIFY_CLIENT_ID"
+const clientSecret = "YOUR_SPOTIFY_SECRET"
 
 ```
 
