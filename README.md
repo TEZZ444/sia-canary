@@ -15,6 +15,43 @@ Get This Before Making any changes
 - Node Js [v18.16.1 or higher](https://nodejs.org/en/download/)
 - MongoDb [v4.4.0 or higher](https://www.mongodb.com/try/download/community)
 
+## Installation Process
+
+1. Clone the Sia Canary - 
+  
+```bash
+
+  git clone  https://github.com/TEZZ444/sia-canary.git
+
+```
+
+2. change the directory to Sia Canary -
+
+```bash
+
+cd sia-canary
+
+```
+
+3. Install the Packages -
+
+```bash
+
+npm install
+
+```
+
+4. Change Some Things In config.js -
+  
+```bash
+
+TOKEN: "YOUR_BOT_TOKEN"
+MONGO: "YOUR_MONGODB_URL"
+OWNER: ["YOUR_ID"]
+PREFIX: "+"
+COLOR: "#2f3136"
+
+```
 
 
 [version-shield]: https://img.shields.io/github/package-json/v/TEZZ444/sia-canary?style=for-the-badge
