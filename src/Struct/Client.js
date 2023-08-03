@@ -96,8 +96,8 @@ export default class SiaClient extends Client {
             playlistLimit: 30,
           }),
           new Spotify({
-            clientId: "83c98500a89a4a5eae6fa819643644b8",
-            clientSecret: "b2627d1bf6c846d98e102fe58e656892",
+            clientId: "YOUR_SPOTIFY_CLIENT_ID",
+            clientSecret: "YOUR_SPOTIFY_SECRET",
             playlistPageLimit: 50,
             albumPageLimit: 10,
             searchLimit: 10,
