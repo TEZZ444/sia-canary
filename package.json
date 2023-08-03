@@ -1,7 +1,7 @@
 {
   "name": "sia-canary",
   "version": "6.0.0",
-  "description": "",
+  "description": "Sia Canary Is The Best Discord Music Bot That Uses Discord.js Library Kazagumo ( Shoukaku ) Database (MongoDB) And ES Module Javascript.",
   "main": "node index.js",
   "type": "module",
   "scripts": {
