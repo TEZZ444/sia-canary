@@ -3,12 +3,12 @@ Sia Canary Is The Best Discord Music Bot That Uses Discord.js Library Kazagumo (
 
 
 [![Version][version-shield]](version-url)
-[![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
+[![Contributors][contributors-shield]][contributors-url]
 
 
-##  Requirements
+## Requirements
 
 Get This Before Making any changes
 
@@ -57,6 +57,21 @@ const clientId = "YOUR_SPOTIFY_CLIENT_ID"
 const clientSecret = "YOUR_SPOTIFY_SECRET"
 
 ```
+5. To Start The Bot -
+
+```bash
+
+  npm start
+
+```
+## License
+
+Distributed under the Apache-2.0 license License. See ![LICENSE](https://img.shields.io/github/license/TEZZ444/sia-canary?style=social) for more information.
+
+
+<a href="https://github.com/TEZZ444/sia-canary/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=TEZZ444/sia-canary" />
+</a>
 
 
 [version-shield]: https://img.shields.io/github/package-json/v/TEZZ444/sia-canary?style=for-the-badge
