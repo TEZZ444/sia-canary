@@ -8,6 +8,9 @@ Sia Canary Is The Best Discord Music Bot That Uses Discord.js Library Kazagumo (
 [![Forks][forks-shield]][forks-url]
 
 
+Join Support Server : https://discord.gg/wcqmHgNzDn
+
+
 ## Requirements
 
 Get This Before Making any changes
