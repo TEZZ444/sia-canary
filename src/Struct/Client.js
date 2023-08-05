@@ -7,6 +7,7 @@ import {
 } from "discord.js";
 import { ClusterClient, getInfo } from "discord-hybrid-sharding";
 import { Connectors } from "shoukaku";
+import { Spotify } from "spotify-info.js";
 import { Kazagumo, Plugins } from "kazagumo";
 import Deezer from "kazagumo-deezer";
 import Config from "./../config.js";
@@ -66,6 +67,10 @@ export default class SiaClient extends Client {
       red: ButtonStyle.Danger,
       link: ButtonStyle.Link,
     };
+    this.sp = new Spotify({
+      clientID: "YOUR_SPOTIFY_CLIENT_ID",
+      clientSecret: "YOUR_SPOTIFY_SECRET",
+    });
     this.owner = Config.OWNER;
     this.cluster = new ClusterClient(this);
     this.functions = new Functions(this);

@@ -75,7 +75,6 @@ export default {
         const trackName = res.title;
         const trackUrls = await spoti.searchSpotify(trackName, limit, country);
         if (!trackUrls[0]) return;
-
         const query2 = trackUrls[0];
         let result = await client.kazagumo.search(query2, {
           requester: message.author,
@@ -119,8 +118,8 @@ export default {
         });
       }
     } else {
-        const trackUrls = await spoti.searchSpotify(query, limit, country);
-        const nextQuery = trackUrls[0];
+      const trackUrls = await spoti.searchSpotify(query, limit, country);
+      const nextQuery = trackUrls[0];
       let result = await client.kazagumo.search(nextQuery, {
         requester: message.author,
       });
@@ -176,13 +175,6 @@ export default {
     }
   },
 };
-
-
-
-
-
-
-
 
 /*
 

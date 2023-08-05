@@ -15,6 +15,12 @@ export default {
       auth: "glasshost1984",
       secure: false,
     },
+    {
+      name: "Sia Node 2",
+      url: "narco.buses.rocks:2269",
+      auth: "glasshost1984",
+      secure: false,
+    },
   ],
 };
 

@@ -1,7 +1,7 @@
 import { EmbedBuilder, ButtonBuilder, ActionRowBuilder } from "discord.js";
 
 
-export default{
+export default {
   name: "uptime",
   aliases: ["up"],
   category: "Utility",

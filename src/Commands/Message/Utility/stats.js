@@ -128,7 +128,7 @@ export default {
             iconURL: i.guild.iconURL({ dynamic: true }),
           })
           .setDescription(
-            `- Total Ram **${totalMemory} MB**\n` +
+              `- Total Ram **${totalMemory} MB**\n` +
               `- Ram Usage **${memoryUsage} MB**\n` +
               `- Memory Left **${freeMemory} MB**\n` +
               `- CPU Model **${cpuModel}**\n` +

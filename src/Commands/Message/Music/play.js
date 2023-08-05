@@ -1,9 +1,4 @@
 import { EmbedBuilder, ButtonBuilder, ActionRowBuilder } from "discord.js";
-import { Spotify } from "spotify-info.js";
-const spotify = new Spotify({
-  clientID: "YOUR_SPOTIFY_CLIENT_ID",
-  clientSecret: "YOUR_SPOTIFY_SECRET",
-});
 
 export default {
   name: "play",
@@ -25,7 +20,7 @@ export default {
   run: async ({ client, message, args, ServerData, Color }) => {
     let prefix = ServerData.prefix;
     const query = args.join(" ");
-    // const setTrack = await spotify.searchTrack(query, {
+    // const setTrack = await client.sp.searchTrack(query, {
     //   limit: 1,
     // });
 
@@ -76,7 +71,7 @@ export default {
         if (!res) return;
         const trackName = res.title;
         console.log(trackName);
-        const searchedtracks = await spotify.searchTrack(trackName, {
+        const searchedtracks = await client.sp.searchTrack(trackName, {
           limit: 5,
         });
         if (!searchedtracks[0]) return;

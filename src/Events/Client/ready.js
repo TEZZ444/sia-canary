@@ -62,7 +62,7 @@ export default async (client) => {
   console.log(`Reconnected to ${maindata.length} guilds`);
   console.log(chalk.green(`Cluster #${client.cluster.id} Is Stable!`));
   setInterval(() => {
-    let statuses = [`version 6.0`];
+    let statuses = [`+help`,`dsc.gg/sia`];
     let status = statuses[Math.floor(Math.random() * statuses.length)];
     client.user.setActivity(status, { type: ActivityType.Listening });
   }, 5000);

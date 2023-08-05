@@ -5,13 +5,8 @@ import {
 } from "discord.js";
 import prettyMilliseconds from "pretty-ms";
 import reconnectAuto from "../Models/reconnect.js";
-import { Spotify } from "spotify-info.js";
 import Functions from "./../Struct/functions.js";
 
-const spotify = new Spotify({
-  clientID: "YOUR_SPOTIFY_CLIENT_ID",
-  clientSecret: "YOUR_SPOTIFY_SECRET",
-});
 /**
  * @param {import("../Struct/Client")} client
  * @param {import("discord.js").Message} message
@@ -33,7 +28,7 @@ export default async (client) => {
         secondsDecimalDigits: 0,
       });
     }
-    const searchUrl = await spotify.searchTrack(track.title, {
+    const searchUrl = await client.sp.searchTrack(track.title, {
       limit: 1,
     });
     if (!searchUrl[0]) return;
@@ -175,9 +170,35 @@ export default async (client) => {
       });
     }
   });
-  client.kazagumo.on("playerClosed", async (player, track) => {});
-  client.kazagumo.on("playerStuck", async (player, track) => {});
-  client.kazagumo.on("playerResumed", async (player, track) => {});
+  client.kazagumo.on("playerClosed", async (player, track) => {
+    const channel = client.channels.cache.get(player.textId);
+    if (channel) {
+      channel.messages.fetch(player.data.get("nowplaying")).then((msg) => {
+        msg.delete();
+      });
+    }
+  });
+  client.kazagumo.on("playerStuck", async (player, track) => {
+    let msg = await channel?.messages.fetch(player.data.get("nowplaying"));
+    if (msg) {
+      await msg.delete();
+    }
+    const channel = client.channels.cache.get(player.textId);
+    player.skip();
+    const embed = new EmbedBuilder()
+      .setColor(client.settings.COLOR)
+      .setDescription(
+        `> **Track Got Stuck. Skipping To Next Track.**`
+      );
+    channel.send({ embeds: [embed] }).then((msg) => {
+      setTimeout(() => {
+        msg.delete();
+      }, 5000);
+    });
+
+  });
+  client.kazagumo.on("playerResumed", async (player, track) => {
+  });
   client.kazagumo.on("playerMoved", async (player, state, channel) => {
     const data = await reconnectAuto.findOne({ GuildId: player.guildId });
     const guild = client.guilds.cache.get(player.guildId);
@@ -248,8 +269,28 @@ export default async (client) => {
       if (player.paused) player.pause(false);
     }
   });
-  client.kazagumo.on("playerException", async (player, track) => {});
-  client.kazagumo.on("playerUpdate", async (player, track) => {});
+  client.kazagumo.on("playerException", async (player, track) => {
+    const channel = client.channels.cache.get(player.textId);
+    if (channel) {
+      channel.messages.fetch(player.data.get("nowplaying")).then((msg) => {
+        msg.delete();
+      });
+    }
+    player.skip();
+    const embed = new EmbedBuilder()
+      .setColor(client.settings.COLOR)
+      .setDescription(
+        `> **Track Got Exception. Skipping To Next Track.**`
+      );
+    channel.send({ embeds: [embed] }).then((msg) => {
+      setTimeout(() => {
+        msg.delete();
+      }, 5000);
+    });
+
+  });
+  client.kazagumo.on("playerUpdate", async (player, track) => {
+  });
 };
 
 
