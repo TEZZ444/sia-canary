@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import { ClusterClient, getInfo } from "discord-hybrid-sharding";
 import { Connectors } from "shoukaku";
-import { Spotify } from "spotify-info.js";
+import SpotifyInfo from "spotify-info.js";
 import { Kazagumo, Plugins } from "kazagumo";
 import Deezer from "kazagumo-deezer";
 import Config from "./../config.js";
