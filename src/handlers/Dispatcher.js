@@ -16,9 +16,7 @@ import Functions from "./../Struct/functions.js";
  */
 export default async (client) => {
   client.kazagumo.on("playerStart", async (player, track) => {
-    track.requester = player.previous
-      ? player.queue.previous.requester
-      : player.queue.current.requester;
+    track.requester = player.queue.current.requester;
     if (track.uri.includes("https://cdn.discordapp.com/attachments/")) {
       return;
     }
@@ -49,9 +47,7 @@ export default async (client) => {
     const embed = new EmbedBuilder()
       .setAuthor({
         name: `Now Playing`,
-        iconURL: player.queue.previous
-          ? player.queue.previous.requester.displayAvatarURL({ dynamic: true })
-          : player.queue.current.requester.displayAvatarURL({ dynamic: true }),
+        iconURL: player.queue.current.requester.displayAvatarURL({ dynamic: true }),
       })
       .setColor(client.settings.COLOR)
       .setDescription(
@@ -65,10 +61,7 @@ export default async (client) => {
       .addFields(
         {
           name: `Requester`,
-          value: `[${
-            player.queue.previous
-              ? player.queue.previous.requester.username
-              : player.queue.current.requester.username
+          value: `[${player.queue.current.requester.globalName
           }](https://discord.gg/fuZBHxzDNc)`,
           inline: true,
         },
