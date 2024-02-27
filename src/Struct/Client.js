@@ -12,7 +12,7 @@ import { Kazagumo, Plugins } from "kazagumo";
 import Deezer from "kazagumo-deezer";
 import Config from "./../config.js";
 import mongoose from "mongoose";
-import Spotify from "kazagumo-spotify";
+import spotify from "kazagumo-spotify";
 import Functions from "./functions.js";
 import SiaEvents from "../handlers/event.js";
 const Intents = [
@@ -68,8 +68,8 @@ export default class SiaClient extends Client {
       link: ButtonStyle.Link,
     };
     this.sp = new Spotify({
-      clientID: "YOUR_SPOTIFY_CLIENT_ID",
-      clientSecret: "YOUR_SPOTIFY_SECRET",
+      clientID: Config.SpotifyClientId,
+      clientSecret: Config.SpotifyClientSecret,
     });
     this.owner = Config.OWNER;
     this.cluster = new ClusterClient(this);
@@ -100,9 +100,9 @@ export default class SiaClient extends Client {
           new Deezer({
             playlistLimit: 30,
           }),
-          new Spotify({
-            clientId: "YOUR_SPOTIFY_CLIENT_ID",
-            clientSecret: "YOUR_SPOTIFY_SECRET",
+          new spotify({
+            clientId: Config.SpotifyClientId,
+            clientSecret: Config.SpotifyClientSecret,
             playlistPageLimit: 50,
             albumPageLimit: 10,
             searchLimit: 10,
