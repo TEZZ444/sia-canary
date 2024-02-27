@@ -1,6 +1,8 @@
 export default {
   TOKEN: "BOT_TOKEN",
   MONGO: "YOUR_MONGODB_URL",
+  SpotifyClientId:"",
+  SpotifyClientSecret :"",
   OWNER: ["1054358894928990228", "900981299022536757"],
   PREFIX: "+",
   COLOR: "#2f3136",
