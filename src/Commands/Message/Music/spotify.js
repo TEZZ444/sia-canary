@@ -1,7 +1,5 @@
 import { EmbedBuilder, ButtonBuilder, ActionRowBuilder } from "discord.js";
 import SpotiPro from "spoti-pro";
-const clientId = "YOUR_SPOTIFY_CLIENT_ID";
-const clientSecret = "YOUR_SPOTIFY_SECRET";
 const spoti = new SpotiPro(clientId, clientSecret);
 const limit = 5;
 const country = "IN";
@@ -25,6 +23,8 @@ export default {
   },
   run: async ({ client, message, args, ServerData, Color }) => {
     let prefix = ServerData.prefix;
+    const clientId = client.Config.SpotifyClientId;
+const clientSecret = client.Config.SpotifyClientSecret;
     const query = args.join(" ");
     if (!query) {
       setTimeout(() => {
