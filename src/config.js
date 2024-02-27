@@ -18,9 +18,9 @@ export default {
       secure: false,
     },
     {
-      name: "Sia Node 2",
-      url: "narco.buses.rocks:2269",
-      auth: "glasshost1984",
+      name: "Sia Node 1",
+      url: "lavalink.chompubot.work:30216",
+      auth: "somboytiger",
       secure: false,
     },
   ],
