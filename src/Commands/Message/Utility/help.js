@@ -141,10 +141,12 @@ export default {
                       }\``
                   )
                   .join(", ");
+                  let commands2 = client.messageCommands
+                  .filter((cmd) => cmd.category === "Music")
                 const embed = new EmbedBuilder()
                   .setTitle(
-                    "Music Commands" + commands.size
-                      ? `\`(${commands.size})\` Music Commands`
+                    "Music Commands " + commands2.size
+                      ? `\`(${commands2.size})\` Music Commands`
                       : ""
                   )
                   .setDescription(commands)
@@ -178,10 +180,12 @@ export default {
                       }\``
                   )
                   .join(", ");
+                  let commands2 = client.messageCommands
+                  .filter((cmd) => cmd.category === "Utility")
                 const embed = new EmbedBuilder()
                   .setTitle(
-                    "Utility Commands" + commands.size
-                      ? `\`(${commands.size})\` Utility Commands`
+                    "Utility Commands " + commands2.size
+                      ? `\`(${commands2.size})\` Utility Commands`
                       : ""
                   )
                   .setDescription(commands)
@@ -215,10 +219,12 @@ export default {
                       }\``
                   )
                   .join(", ");
+                  let commands2 = client.messageCommands
+                  .filter((cmd) => cmd.category === "Filters")
                 const embed = new EmbedBuilder()
                   .setTitle(
-                    "Filters Commands" + commands.size
-                      ? `\`(${commands.size})\` Filters Commands`
+                    "Filters Commands" + commands2.size
+                      ? `\`(${commands2.size})\` Filters Commands`
                       : ""
                   )
                   .setDescription(commands)
@@ -252,10 +258,12 @@ export default {
                       }\``
                   )
                   .join(", ");
+                  let commands2 = client.messageCommands
+                  .filter((cmd) => cmd.category === "Owner")
                 const embed = new EmbedBuilder()
                   .setTitle(
-                    "Owners Commands" + commands.size
-                      ? `\`(${commands.size})\` Owners Commands`
+                    "Owners Commands" + commands2.size
+                      ? `\`(${commands2.size})\` Owners Commands`
                       : ""
                   )
                   .setDescription(commands)
@@ -288,10 +296,11 @@ export default {
                       }\``
                   )
                   .join(", ");
+                  let commands2 = client.messageCommands
                 const embed = new EmbedBuilder()
                   .setTitle(
-                    "All Commands" + commands.size
-                      ? `\`(${commands.size})\` All Commands`
+                    "All Commands" + commands2.size
+                      ? `\`(${commands2.size})\` All Commands`
                       : ""
                   )
                   .setDescription(commands)
@@ -330,15 +339,6 @@ export default {
     }
   },
 };
-
-
-
-
-
-
-
-
-
 
 
 
