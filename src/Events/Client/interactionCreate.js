@@ -44,9 +44,7 @@ export default async (client, interaction) => {
     const player = await client.kazagumo.players.get(interaction.guild.id);
     let requester;
     if (player)
-      requester = player?.queue.previous
-        ? player.queue.previous.requester
-        : player.queue.current.requester;
+      requester = player?.queue.current.requester;
     if (!player) requester = client.user;
     const notInvc = new EmbedBuilder();
     notInvc.setColor(client.settings.COLOR);
