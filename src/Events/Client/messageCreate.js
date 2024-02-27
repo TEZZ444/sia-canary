@@ -162,7 +162,7 @@ export default async (client, message) => {
         inline: true,
       });
     }
-    hook.send({ embeds: [embed] });
+   // hook.send({ embeds: [embed] });
     if (command.options.owner && !client.owner.includes(message.member.id) && !prefixMatch.includes(message.member.id)) {
       const embed = new EmbedBuilder()
         .setColor(Color)
