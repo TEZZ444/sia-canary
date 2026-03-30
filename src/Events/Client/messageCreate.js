@@ -40,8 +40,7 @@ export default async (client, message) => {
   if (message.partial) await message.fetch();
   
   const ServerData = await getServerData(client, message.guild.id);
-  let { prefix } = ServerData;
-  if (!prefix) prefix = Config.PREFIX;
+  let prefix = ServerData?.prefix ?? Config.PREFIX;
 
   const permissions = {
     userExternalEmoji: PermissionsBitField.Flags.UseExternalEmojis,

@@ -156,11 +156,7 @@ function extractArgs(commandName, interaction) {
     const raw = interaction.options.getString(key, false);
     const v = typeof raw === "string" ? raw.trim() : raw;
     if (!v) continue;
-    if (key === "query") {
-      args.push(v);
-    } else {
-      args.push(v);
-    }
+    args.push(v);
   }
   return args;
 }
@@ -192,12 +188,15 @@ export async function runHybridCommand(client, interaction) {
     return true;
   }
 
+  const permissionText = Array.isArray(command.permission)
+    ? command.permission.join(", ")
+    : command.permission;
   if (command.permission && !hasRequiredPerms(interaction.member, command.permission)) {
     await interaction.reply({
       embeds: [
         new EmbedBuilder()
           .setColor(color)
-          .setDescription(`You need \`${command.permission}\` permission to run this command.`),
+          .setDescription(`You need \`${permissionText}\` permission to run this command.`),
       ],
       ephemeral: true,
     });

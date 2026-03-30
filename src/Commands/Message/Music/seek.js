@@ -93,7 +93,16 @@ export default{
         ],
       });
     }
-    await player.seek(ms || 0);
+    if (!Number.isFinite(ms)) {
+      return message.channel.send({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(client.settings.COLOR)
+            .setDescription("Invalid seek value."),
+        ],
+      });
+    }
+    await player.seek(ms);
     return message.channel.send({
       embeds: [
         new EmbedBuilder()

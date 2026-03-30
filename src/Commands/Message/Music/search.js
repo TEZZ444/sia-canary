@@ -58,7 +58,10 @@ export default {
       .setPlaceholder("Select a track")
       .addOptions(
         tracks.map((track, index) => ({
-          label: `${index + 1}. ${track.title.slice(0, 90)}`,
+          label:
+            track.title.length > 90
+              ? `${index + 1}. ${track.title.slice(0, 87)}...`
+              : `${index + 1}. ${track.title}`,
           value: `${index}`,
           description: (track.author || "Unknown").slice(0, 90),
         }))
