@@ -18,6 +18,17 @@ const hook = new WebhookClient({ url: webHookurl });
  * @param {import("kazagumo").Player} player
  */
 export default async (client, message) => {
+  const normalizePerms = (value) => {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof value === "string")
+      return value
+        .split(",")
+        .map((p) => p.trim())
+        .filter(Boolean);
+    return [];
+  };
+
   let emojis;
   let Color = Config.COLOR;
   if (!message.inGuild() || message.author.bot) return;
@@ -211,12 +222,7 @@ export default async (client, message) => {
     if(command.permission) perms = command.permission;
     if (
       command.permission &&
-      !message.member.permissions.has(
-        command.permission
-          .split(",")
-          .map((p) => p.trim())
-          .filter(Boolean)
-      ) &&
+      !message.member.permissions.has(normalizePerms(command.permission)) &&
       !client.owner.includes(message.member.id)
     ) {
       const embed = new EmbedBuilder()

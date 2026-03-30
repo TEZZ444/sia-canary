@@ -146,10 +146,11 @@ function extractArgs(commandName, interaction) {
   const args = [];
   const keys = ["query", "value", "time", "mode", "action", "command"];
   for (const key of keys) {
-    const v = interaction.options.getString(key, false);
+    const raw = interaction.options.getString(key, false);
+    const v = typeof raw === "string" ? raw.trim() : raw;
     if (!v) continue;
     if (key === "query") {
-      args.push(...v.trim().split(/\s+/g));
+      args.push(v);
     } else {
       args.push(v);
     }

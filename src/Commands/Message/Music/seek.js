@@ -84,7 +84,15 @@ export default{
     }
    
     const track = player.queue.current;
-    if (!track) return;
+    if (!track) {
+      return message.channel.send({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(client.settings.COLOR)
+            .setDescription("No current track found to seek."),
+        ],
+      });
+    }
     await player.seek(ms || 0);
     return message.channel.send({
       embeds: [
