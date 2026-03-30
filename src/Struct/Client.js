@@ -117,8 +117,7 @@ export default class SiaClient extends Client {
         },
       },
       new Connectors.DiscordJS(this),
-      this.Nodes,
-      Spotify
+      this.Nodes
     );
     /**
      * @param {String} id

@@ -15,6 +15,17 @@ import Functions from "./../Struct/functions.js";
  * @param {import("kazagumo").PlayerMovedChannels} channel
  */
 export default async (client) => {
+  const safeDeleteNowPlaying = async (player) => {
+    const channel = client.channels?.cache.get(player.textId);
+    if (!channel) return;
+    const nowPlayingId = player.data.get("nowplaying");
+    if (!nowPlayingId) return;
+    try {
+      const msg = await channel.messages.fetch(nowPlayingId);
+      if (msg) await msg.delete().catch(() => {});
+    } catch {}
+  };
+
   client.kazagumo.on("playerStart", async (player, track) => {
     track.requester = player.queue.current.requester;
     if (track.uri.includes("https://cdn.discordapp.com/attachments/")) {
@@ -112,27 +123,15 @@ export default async (client) => {
   });
   client.kazagumo.on("playerResolveError", async (player, track) => {});
   client.kazagumo.on("playerDestroy", async (player, track) => {
-    const channel = client.channels?.cache.get(player.textId);
-    let msg = await channel?.messages.fetch(player.data.get("nowplaying"));
-    if (msg) {
-      await msg.delete();
-    }
+    await safeDeleteNowPlaying(player);
   });
   client.kazagumo.on("playerCreate", async (player, track) => {});
   client.kazagumo.on("playerEnd", async (player, track) => {
-    const channel = client.channels?.cache.get(player.textId);
-    if (channel) {
-      channel.messages.fetch(player.data.get("nowplaying")).then((msg) => {
-        msg.delete();
-      });
-    }
+    await safeDeleteNowPlaying(player);
   });
   client.kazagumo.on("playerEmpty", async (player, track) => {
     let channel = client.channels?.cache.get(player.textId);
-    let msg = await channel?.messages.fetch(player.data.get("nowplaying"));
-    if (msg) {
-      await msg.delete();
-    }
+    await safeDeleteNowPlaying(player);
     const ap = player.data.get("autoplay");
     if (ap) {
       return Functions.SiaAutoplay(client, player);
@@ -164,18 +163,10 @@ export default async (client) => {
     }
   });
   client.kazagumo.on("playerClosed", async (player, track) => {
-    const channel = client.channels.cache.get(player.textId);
-    if (channel) {
-      channel.messages.fetch(player.data.get("nowplaying")).then((msg) => {
-        msg.delete();
-      });
-    }
+    await safeDeleteNowPlaying(player);
   });
   client.kazagumo.on("playerStuck", async (player, track) => {
-    let msg = await channel?.messages.fetch(player.data.get("nowplaying"));
-    if (msg) {
-      await msg.delete();
-    }
+    await safeDeleteNowPlaying(player);
     const channel = client.channels.cache.get(player.textId);
     player.skip();
     const embed = new EmbedBuilder()
@@ -264,11 +255,7 @@ export default async (client) => {
   });
   client.kazagumo.on("playerException", async (player, track) => {
     const channel = client.channels.cache.get(player.textId);
-    if (channel) {
-      channel.messages.fetch(player.data.get("nowplaying")).then((msg) => {
-        msg.delete();
-      });
-    }
+    await safeDeleteNowPlaying(player);
     player.skip();
     const embed = new EmbedBuilder()
       .setColor(client.settings.COLOR)

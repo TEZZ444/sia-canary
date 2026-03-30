@@ -1,4 +1,5 @@
 import { EmbedBuilder, ButtonBuilder, ActionRowBuilder } from "discord.js";
+import { invalidateServerData } from "../../../Struct/serverDataCache.js";
 
 export default {
   name: "prefix",
@@ -17,7 +18,7 @@ export default {
     premium :false,
     vote :false,
   },
-  run: async ({ client, message,ServerData }) => {
+  run: async ({ client, message, ServerData, args }) => {
 
     if (!args[0]) {
         return message.channel.send({
@@ -67,6 +68,7 @@ export default {
         }
         ServerData.prefix = prefix;
         ServerData.save();
+        invalidateServerData(client, message.guild.id);
         return message.channel.send({
           embeds: [
             new EmbedBuilder()
@@ -77,7 +79,7 @@ export default {
           ],
         });
       } else if (args[0].toLowerCase() === "reset") {
-        if (ServerData.prefix === settings.prefix) {
+        if (ServerData.prefix === client.settings.PREFIX) {
           return message.channel.send({
             embeds: [
               new EmbedBuilder()
@@ -88,8 +90,9 @@ export default {
             ],
           });
         }
-        ServerData.prefix = settings.prefix;
+        ServerData.prefix = client.settings.PREFIX;
         ServerData.save();
+        invalidateServerData(client, message.guild.id);
         return message.channel.send({
           embeds: [
             new EmbedBuilder()

@@ -6,7 +6,7 @@ import {
   PermissionsBitField,
 } from "discord.js";
 import Config from "../../config.js";
-import ServerSchema from "../../Models/ServerData.js";
+import { getServerData } from "../../Struct/serverDataCache.js";
 // webhook url insert here
 const webHookurl ="WEBHOOK_URL";
 import { WebhookClient } from "discord.js";
@@ -28,16 +28,9 @@ export default async (client, message) => {
     return;
   if (message.partial) await message.fetch();
   
-  let ServerData = async () => {
-    if (await ServerSchema.findOne({ serverID: message.guild.id })) {
-      return await ServerSchema.findOne({ serverID: message.guild.id });
-    } else {
-      return new ServerSchema({ serverID: message.guild.id }).save();
-    }
-  };
-  ServerData = await ServerData();
+  const ServerData = await getServerData(client, message.guild.id);
   let { prefix } = ServerData;
-  if(prefix) prefix = Config.PREFIX;
+  if (!prefix) prefix = Config.PREFIX;
 
   const permissions = {
     userExternalEmoji: PermissionsBitField.Flags.UseExternalEmojis,
@@ -138,9 +131,7 @@ export default async (client, message) => {
   const cmd = args.length > 0 ? args.shift().toLowerCase() : null;
   const command =
     client.messageCommands.get(cmd) ||
-    client.messageCommands.find(
-      (cmds) => cmds.aliases && cmds.aliases.includes(cmd)
-    );
+    client.messageCommands.get(client.messageCommandAliases?.get(cmd));
   if (command) {
     const embed = new EmbedBuilder()
       .setAuthor({
@@ -220,8 +211,13 @@ export default async (client, message) => {
     if(command.permission) perms = command.permission;
     if (
       command.permission &&
-      !message.member.permissions.has(PermissionsBitField.Flags.perms) &&
-      !client.owners.includes(message.member.id)
+      !message.member.permissions.has(
+        command.permission
+          .split(",")
+          .map((p) => p.trim())
+          .filter(Boolean)
+      ) &&
+      !client.owner.includes(message.member.id)
     ) {
       const embed = new EmbedBuilder()
         .setColor(Color)
@@ -288,7 +284,9 @@ export default async (client, message) => {
       return message.channel.send({ embeds: [embed] });
     }
     if (command.options.vote) {
-      let voted = await topgg.hasVoted(user.id);
+      const voted = client.topgg?.hasVoted
+        ? await client.topgg.hasVoted(message.author.id)
+        : true;
       if (!voted && !client.owner.includes(message.member.id)) {
         const embed = new EmbedBuilder()
           .setColor(Color)

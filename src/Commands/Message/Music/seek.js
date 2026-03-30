@@ -83,8 +83,9 @@ export default{
       });
     }
    
-    track = player.queue.current;
-    player.position = ms ? ms : 0;
+    const track = player.queue.current;
+    if (!track) return;
+    await player.seek(ms || 0);
     return message.channel.send({
       embeds: [
         new EmbedBuilder()

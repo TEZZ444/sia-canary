@@ -1,10 +1,14 @@
 import { ActivityType } from "discord.js";
 import chalk from "chalk";
 import reconnectAuto from "../../Models/reconnect.js";
+import { registerSlashCommands } from "../../handlers/HybridCommand.js";
 /**
  * @param {import("../Struct/Client")} client
  */
 export default async (client) => {
+  await registerSlashCommands(client).catch((err) =>
+    console.error("Failed to register slash commands:", err)
+  );
   client.cluster
     .broadcastEval((c) => c.guilds.cache.size)
     .then((results) =>
@@ -42,23 +46,21 @@ export default async (client) => {
     }`,
     "player"
   );
-  for (const data of maindata) {
-    const index = maindata.indexOf(data);
+  for (const [index, data] of maindata.entries()) {
     setTimeout(async () => {
-        const text = client.channels.cache.get(data.TextId);
-        const guild = client.guilds.cache.get(data.GuildId);
-        const voice = client.channels.cache.get(data.VoiceId);
-        if (!guild || !text || !voice) return;
-        const player = await client.kazagumo.createPlayer({
-            guildId: guild.id,
-            textId: text.id,
-            voiceId: voice.id,
-            deaf: true,
-            shardId: guild.shardId,
-        });
-    },
-    ), index * 5000;
-}
+      const text = client.channels.cache.get(data.TextId);
+      const guild = client.guilds.cache.get(data.GuildId);
+      const voice = client.channels.cache.get(data.VoiceId);
+      if (!guild || !text || !voice) return;
+      await client.kazagumo.createPlayer({
+        guildId: guild.id,
+        textId: text.id,
+        voiceId: voice.id,
+        deaf: true,
+        shardId: guild.shardId,
+      });
+    }, index * 5000);
+  }
   console.log(`Reconnected to ${maindata.length} guilds`);
   console.log(chalk.green(`Cluster #${client.cluster.id} Is Stable!`));
   setInterval(() => {

@@ -27,10 +27,18 @@ export default async (client) => {
         ) {
           client.messageCommands.set(command.name, command);
           messageCommandsCount++;
-          console.log(`+ Command Loaded (${command.name})`);
+            console.log(`+ Command Loaded (${command.name})`);
         } else {
           console.log(`Failed Loading Command :  (${command.name})`);
         }
+      }
+    }
+    client.messageCommandAliases = new Map();
+    for (const command of client.messageCommands.values()) {
+      if (!Array.isArray(command.aliases)) continue;
+      for (const alias of command.aliases) {
+        if (!alias || client.messageCommandAliases.has(alias)) continue;
+        client.messageCommandAliases.set(alias, command.name);
       }
     }
   } catch (error) {
