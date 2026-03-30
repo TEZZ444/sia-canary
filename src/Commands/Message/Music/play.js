@@ -1,4 +1,10 @@
 import { EmbedBuilder, ButtonBuilder, ActionRowBuilder } from "discord.js";
+import {
+  ensurePlayer,
+  playIfIdle,
+  queueFromSearchResult,
+  resolveQuery,
+} from "../../../Struct/musicUtils.js";
 
 export default {
   name: "play",
@@ -43,14 +49,8 @@ export default {
         }, 14500);
       });
     }
-    const {channel} = message.member.voice;
-    let player = await client.kazagumo.createPlayer({
-      guildId: message.guild.id,
-      textId: message.channel.id,
-      voiceId: channel.id,
-      deaf: true,
-    }
-    );
+    const player = await ensurePlayer(client, message);
+    if (!player) return;
     if (
       /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi.test(
         args.join(" ")
@@ -123,9 +123,7 @@ export default {
         });
       }
     } else {
-      let result = await client.kazagumo.search(query, {
-        requester: message.author,
-      });
+      let result = await resolveQuery(client, query, message.author);
       if (!result.tracks.length) {
         const embed = new EmbedBuilder()
           .setColor(Color)
@@ -136,10 +134,8 @@ export default {
           .setDescription(`**No Results Found For Your Query**`);
         return message.reply({ embeds: [embed] });
       }
-      if (result.type === "PLAYLIST")
-        for (let track of result.tracks) player.queue.add(track);
-      else player.queue.add(result.tracks[0]);
-      if (!player.playing && !player.paused) player.play();
+      await queueFromSearchResult(player, result);
+      await playIfIdle(player);
       if (result.type === "PLAYLIST") {
         const embed = new EmbedBuilder()
           .setColor(Color)

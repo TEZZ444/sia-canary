@@ -84,6 +84,13 @@ function buildSlashData(command) {
       type: ApplicationCommandOptionType.String,
       required: false,
     });
+  } else if (command.name === "playnext") {
+    options.push({
+      name: "query",
+      description: "Song name or URL",
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    });
   }
 
   return {

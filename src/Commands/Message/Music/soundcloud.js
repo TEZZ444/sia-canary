@@ -1,4 +1,10 @@
 import { EmbedBuilder } from "discord.js";
+import {
+  ensurePlayer,
+  playIfIdle,
+  queueFromSearchResult,
+  resolveQuery,
+} from "../../../Struct/musicUtils.js";
 
 export default {
   name: "soundcloud",
@@ -31,22 +37,12 @@ export default {
         );
       return message.reply({ embeds: [embed] });
     }
-    const { channel } = message.member.voice;
-    let player = await client.kazagumo.createPlayer({
-      guildId: message.guild.id,
-      textId: message.channel.id,
-      voiceId: channel.id,
-      deaf: true,
-    });
-    let result = await client.kazagumo.search(query, {
-      engine: "soundcloud",
-      requester: message.author,
-    });
+    const player = await ensurePlayer(client, message);
+    if (!player) return;
+    const result = await resolveQuery(client, query, message.author, "soundcloud");
     if (!result.tracks.length) return message.reply("No results found!");
-    if (result.type === "PLAYLIST")
-      for (let track of result.tracks) player.queue.add(track);
-    else player.queue.add(result.tracks[0]);
-    if (!player.playing && !player.paused) player.play();
+    await queueFromSearchResult(player, result);
+    await playIfIdle(player);
     if (result.type === "PLAYLIST") {
       const embed = new EmbedBuilder()
         .setColor(client.settings.COLOR)
