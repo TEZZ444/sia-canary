@@ -1,5 +1,14 @@
 import { EmbedBuilder } from "discord.js";
 
+function formatDuration(ms) {
+  const total = Math.floor(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
 export default{
   name: "seek",
   aliases: [],
@@ -71,6 +80,15 @@ export default{
       );
     };
     ms = ms();
+    if (!Number.isFinite(ms)) {
+      return message.channel.send({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(client.settings.COLOR)
+            .setDescription("Invalid seek value."),
+        ],
+      });
+    }
     if (ms > player.queue.current.length) {
       return message.channel.send({
         embeds: [
@@ -93,22 +111,13 @@ export default{
         ],
       });
     }
-    if (!Number.isFinite(ms)) {
-      return message.channel.send({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(client.settings.COLOR)
-            .setDescription("Invalid seek value."),
-        ],
-      });
-    }
     await player.seek(ms);
     return message.channel.send({
       embeds: [
         new EmbedBuilder()
           .setColor(client.settings.COLOR)
           .setDescription(
-            `Seeked to ${duration(ms)} of the current track.`
+            `Seeked to ${formatDuration(ms)} of the current track.`
           ),
       ],
     });

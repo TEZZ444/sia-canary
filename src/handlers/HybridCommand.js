@@ -25,31 +25,57 @@ function hasRequiredPerms(member, permissionConfig) {
   return member.permissions.has(required, true);
 }
 
-function buildSlashData(command) {
-  const options = [];
-  if (command.name === "play" || command.name === "search") {
-    options.push({
+const SLASH_OPTIONS = {
+  play: [
+    {
       name: "query",
       description: "Song name or URL",
       type: ApplicationCommandOptionType.String,
       required: true,
-    });
-  } else if (command.name === "volume" || command.name === "skip" || command.name === "remove") {
-    options.push({
-      name: "value",
-      description: "Command value",
+    },
+  ],
+  playnext: [
+    {
+      name: "query",
+      description: "Song name or URL",
       type: ApplicationCommandOptionType.String,
-      required: false,
-    });
-  } else if (command.name === "seek") {
-    options.push({
+      required: true,
+    },
+  ],
+  search: [
+    {
+      name: "query",
+      description: "Song name or URL",
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+  ],
+  spotify: [
+    {
+      name: "query",
+      description: "Spotify query or URL",
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+  ],
+  soundcloud: [
+    {
+      name: "query",
+      description: "SoundCloud query or URL",
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+  ],
+  seek: [
+    {
       name: "time",
       description: "Seek time (e.g. 1:30)",
       type: ApplicationCommandOptionType.String,
       required: true,
-    });
-  } else if (command.name === "loop") {
-    options.push({
+    },
+  ],
+  loop: [
+    {
       name: "mode",
       description: "Loop mode",
       type: ApplicationCommandOptionType.String,
@@ -59,9 +85,50 @@ function buildSlashData(command) {
         { name: "queue", value: "queue" },
         { name: "off", value: "off" },
       ],
-    });
-  } else if (command.name === "prefix") {
-    options.push({
+    },
+  ],
+  volume: [
+    {
+      name: "value",
+      description: "Volume value",
+      type: ApplicationCommandOptionType.String,
+      required: false,
+    },
+  ],
+  skip: [
+    {
+      name: "value",
+      description: "Amount to skip",
+      type: ApplicationCommandOptionType.String,
+      required: false,
+    },
+  ],
+  remove: [
+    {
+      name: "value",
+      description: "Queue index to remove",
+      type: ApplicationCommandOptionType.String,
+      required: false,
+    },
+  ],
+  queue: [
+    {
+      name: "value",
+      description: "Page number",
+      type: ApplicationCommandOptionType.String,
+      required: false,
+    },
+  ],
+  help: [
+    {
+      name: "command",
+      description: "Specific command name",
+      type: ApplicationCommandOptionType.String,
+      required: false,
+    },
+  ],
+  prefix: [
+    {
       name: "action",
       description: "Prefix action",
       type: ApplicationCommandOptionType.String,
@@ -70,28 +137,18 @@ function buildSlashData(command) {
         { name: "set", value: "set" },
         { name: "reset", value: "reset" },
       ],
-    });
-    options.push({
+    },
+    {
       name: "value",
       description: "New prefix value",
       type: ApplicationCommandOptionType.String,
       required: false,
-    });
-  } else if (command.name === "help") {
-    options.push({
-      name: "command",
-      description: "Specific command name",
-      type: ApplicationCommandOptionType.String,
-      required: false,
-    });
-  } else if (command.name === "playnext") {
-    options.push({
-      name: "query",
-      description: "Song name or URL",
-      type: ApplicationCommandOptionType.String,
-      required: true,
-    });
-  }
+    },
+  ],
+};
+
+function buildSlashData(command) {
+  const options = SLASH_OPTIONS[command.name] || [];
 
   return {
     name: command.name,
@@ -119,19 +176,27 @@ export async function registerSlashCommands(client) {
 function createInteractionMessage(interaction) {
   const sentMessages = [];
 
-  const channel = {
-    send: async (payload) => {
-      if (interaction.deferred || interaction.replied) {
-        const msg = await interaction.followUp(payload);
-        sentMessages.push(msg);
-        return msg;
-      }
-
+  const safeReply = async (payload) => {
+    if (!interaction.isRepliable()) return null;
+    if (!interaction.deferred && !interaction.replied) {
       await interaction.reply(payload);
       const msg = await interaction.fetchReply();
       sentMessages.push(msg);
       return msg;
-    },
+    }
+    if (interaction.deferred && !interaction.replied) {
+      const msg = await interaction.editReply(payload);
+      sentMessages.push(msg);
+      return msg;
+    }
+    const msg = await interaction.followUp(payload);
+    sentMessages.push(msg);
+    return msg;
+  };
+
+  const channel = {
+    send: safeReply,
+    sendTyping: async () => {},
   };
 
   return {
@@ -140,8 +205,9 @@ function createInteractionMessage(interaction) {
     member: interaction.member,
     guild: interaction.guild,
     client: interaction.client,
+    content: "",
     channel,
-    reply: channel.send,
+    reply: safeReply,
     delete: async () => {},
     inGuild: () => interaction.inGuild(),
     createdTimestamp: Date.now(),
@@ -149,7 +215,7 @@ function createInteractionMessage(interaction) {
   };
 }
 
-function extractArgs(commandName, interaction) {
+function extractArgs(interaction) {
   const args = [];
   const keys = ["query", "value", "time", "mode", "action", "command"];
   for (const key of keys) {
@@ -166,15 +232,13 @@ export async function runHybridCommand(client, interaction) {
 
   const command =
     client.messageCommands.get(interaction.commandName) ||
-    client.messageCommands.find(
-      (cmd) => Array.isArray(cmd.aliases) && cmd.aliases.includes(interaction.commandName)
-    );
+    client.messageCommands.get(client.messageCommandAliases?.get(interaction.commandName));
   if (!command) return false;
 
   const serverData = await getServerData(client, interaction.guild.id);
   const color = client.settings.COLOR;
   const player = client.kazagumo.players.get(interaction.guild.id);
-  const args = extractArgs(command.name, interaction);
+  const args = extractArgs(interaction);
 
   if (command.options?.owner && !client.owner.includes(interaction.user.id)) {
     await interaction.reply({

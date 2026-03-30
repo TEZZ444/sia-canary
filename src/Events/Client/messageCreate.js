@@ -218,10 +218,10 @@ export default async (client, message) => {
       return message.channel.send({ embeds: [embed] }).catch(() => {});
     }
     let perms = [];
-    if(command.permission) perms = command.permission;
+    if (command.permission) perms = normalizePerms(command.permission);
     if (
       command.permission &&
-      !message.member.permissions.has(normalizePerms(command.permission)) &&
+      !message.member.permissions.has(perms) &&
       !client.owner.includes(message.member.id)
     ) {
       const embed = new EmbedBuilder()

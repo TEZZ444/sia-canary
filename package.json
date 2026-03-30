@@ -5,7 +5,8 @@
   "main": "node index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index"
+    "start": "node src/index",
+    "start:container": "node src/index.js"
   },
   "keywords": [
     "MUSIC",
