@@ -2,16 +2,15 @@ import { EmbedBuilder } from "discord.js";
 import {
   ensurePlayer,
   playIfIdle,
-  queueFromSearchResult,
   resolveQuery,
 } from "../../../Struct/musicUtils.js";
 
 export default {
-  name: "spotify",
-  aliases: ["sp"],
+  name: "playnext",
+  aliases: ["pn", "nextplay"],
   category: "Music",
   permission: "",
-  desc: "Play tracks using Spotify source resolution.",
+  desc: "Queues a track to play next.",
   options: {
     owner: false,
     inVc: true,
@@ -30,7 +29,7 @@ export default {
         embeds: [
           new EmbedBuilder()
             .setColor(client.settings.COLOR)
-            .setDescription("Provide a Spotify query or URL."),
+            .setDescription("Provide a song name or URL."),
         ],
       });
     }
@@ -38,29 +37,26 @@ export default {
     const player = await ensurePlayer(client, message);
     if (!player) return;
 
-    const result = await resolveQuery(client, query, message.author, "spotify");
+    const result = await resolveQuery(client, query, message.author);
     if (!result?.tracks?.length) {
       return message.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(client.settings.COLOR)
-            .setDescription("No Spotify results found."),
+            .setDescription("No results found for your query."),
         ],
       });
     }
 
-    const added = await queueFromSearchResult(player, result);
+    const track = result.tracks[0];
+    player.queue.unshift(track);
     await playIfIdle(player);
 
     return message.reply({
       embeds: [
         new EmbedBuilder()
           .setColor(client.settings.COLOR)
-          .setDescription(
-            result.type === "PLAYLIST"
-              ? `Added **${added}** Spotify tracks to queue.`
-              : `Added **${result.tracks[0].title}** from Spotify.`
-          ),
+          .setDescription(`Queued **${track.title}** to play next.`),
       ],
     });
   },

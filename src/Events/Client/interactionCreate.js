@@ -6,7 +6,8 @@ import {
   InteractionType,
   ButtonStyle,
 } from "discord.js";
-import ServerSchema from "../../Models/ServerData.js";
+import { getServerData } from "../../Struct/serverDataCache.js";
+import { runHybridCommand } from "../../handlers/HybridCommand.js";
 
 /**
  * @param {import("../../Struct/Client)}client
@@ -15,14 +16,11 @@ import ServerSchema from "../../Models/ServerData.js";
 
 export default async (client, interaction) => {
   if (!interaction.inGuild()) return;
-  let ServerData = async () => {
-    if (await ServerSchema.findOne({ serverID: interaction.guild.id })) {
-      return await ServerSchema.findOne({ serverID: interaction.guild.id });
-    } else {
-      return new ServerSchema({ serverID: interaction.guild.id }).save();
-    }
-  };
-  ServerData = await ServerData();
+  await getServerData(client, interaction.guild.id);
+  if (interaction.isChatInputCommand()) {
+    await runHybridCommand(client, interaction);
+    return;
+  }
   let player = await client.kazagumo.players.get(interaction.guild.id);
   if (interaction.isButton()) {
     if (
